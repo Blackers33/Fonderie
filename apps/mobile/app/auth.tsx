@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router'
 import { useTranslation } from 'react-i18next'
-import { View } from 'react-native'
+import { useColorScheme, View } from 'react-native'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -10,9 +10,14 @@ import { Text } from '@/components/ui/text'
 export default function AuthScreen() {
   const router = useRouter()
   const { t } = useTranslation()
+  const colorScheme = useColorScheme()
+  const isDark = colorScheme === 'dark'
+  const containerClassName = isDark
+    ? 'flex-1 items-center justify-center bg-background px-6 py-10'
+    : 'flex-1 items-center justify-center bg-card px-6 py-10'
 
   return (
-    <View className="flex-1 items-center justify-center bg-card px-6 py-10">
+    <View className={containerClassName}>
       <Text className="text-xl font-bold text-foreground">{t('auth.appName')}</Text>
       <Text className="text-sm text-muted-foreground">{t('auth.tagline')}</Text>
       <View className="h-8 w-full opacity-0" />

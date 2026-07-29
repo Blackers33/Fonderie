@@ -17,7 +17,12 @@
   },
   "home": {
     "todaysTraining": "Entraînement du jour",
-    "myRoutines": "Mes routines"
+    "myRoutines": "Mes routines",
+    "streak": "Streak",
+    "thisWeek": "Cette semaine",
+    "volume": "Volume",
+    "days_one": "{{count}} jour",
+    "days_other": "{{count}} jours"
   },
   "routineCard": {
     "exerciseCount_one": "{{count}} exercice",

@@ -1,4 +1,4 @@
-import { FlatList, View } from 'react-native'
+import { FlatList } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { HomeHeader } from '@/components/home-header'
 import { RoutineCard } from '@/components/routine-card'
