@@ -1,15 +1,16 @@
 {
   "expo": {
-    "name": "mobile",
-    "slug": "mobile",
+    "name": "Fonderie",
+    "slug": "fonderie",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "mobile",
+    "scheme": "fonderie",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.fonderie.app"
     },
     "android": {
       "adaptiveIcon": {
@@ -19,7 +20,8 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.fonderie.app"
     },
     "web": {
       "output": "static",
@@ -51,8 +53,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "7d58fb83-8b88-432a-b293-082d7d207a45"
+        "projectId": "729ce44a-2f9d-4c4d-a42c-930691662dce"
       }
-    }
+    },
+    "owner": "sachaaa"
   }
 }
