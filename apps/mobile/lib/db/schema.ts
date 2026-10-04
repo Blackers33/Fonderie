@@ -10,6 +10,16 @@ import {
 } from '@workspace/shared-utils'
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
+// Table à ligne unique (id toujours = 1) : l'état local de l'app.
+// Purement mobile, jamais backupée — le serveur a sa propre table `users`.
+export const appState = sqliteTable('app_state', {
+  id: integer('id').primaryKey(),
+  // UUID généré au premier lancement en mode Invité.
+  // Devient l'id du compte serveur à l'inscription (pas de remapping de FK).
+  // Écrasé par l'id du compte lors d'un login sur une install vierge.
+  userId: text('user_id').notNull(),
+})
+
 export const exercises = sqliteTable('exercises', {
   // slug stable, ex: 'bench_press' — sert aussi de nom de fichier image sur le CDN
   id: text('id').primaryKey(),
