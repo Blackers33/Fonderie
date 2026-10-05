@@ -13,6 +13,7 @@
     "typecheck": "turbo run typecheck",
     "build": "turbo run build",
     "dev": "concurrently --raw \"pnpm --filter @workspace/api dev\" \"pnpm --filter @workspace/mobile dev\"",
+    "dev:tunnel": "concurrently --raw \"pnpm --filter @workspace/api dev\" \"pnpm --filter @workspace/mobile dev:tunnel\"",
     "test": "turbo run test",
     "prepare": "husky"
   },
