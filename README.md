@@ -1,6 +1,6 @@
-# GainsFlow
+# Fonderie
 
-GainsFlow est une application de suivi de musculation, inspirée par des produits comme Hevy.
+Fonderie est une application de suivi de musculation, inspirée par des produits comme Hevy.
 
 Ce repository contient mon projet de fin d'etudes, avec une architecture monorepo regroupant:
 
@@ -11,7 +11,7 @@ Ce repository contient mon projet de fin d'etudes, avec une architecture monorep
 
 ## Vision du projet
 
-L'objectif de GainsFlow est d'offrir un outil simple et performant pour suivre sa progression a la salle:
+L'objectif de Fonderie est d'offrir un outil simple et performant pour suivre sa progression a la salle:
 
 - planifier et enregistrer ses seances
 - suivre ses exercices, series, charges et repetitions
