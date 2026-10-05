@@ -27,7 +27,7 @@ function HomeHeader() {
         <Card className="flex-1 gap-2 p-2">
           <Zap color="#E1FF00" />
           <Text className="text-xs text-muted-foreground">{t('home.thisWeek')}</Text>
-          <Text className="text-m text-foreground">4/5</Text>
+          <Text className="text-m text-foreground">4/6</Text>
         </Card>
         <Card className="flex-1 gap-2 p-2">
           <TrendingUp color="#4ECDC4" />

@@ -56,6 +56,12 @@
         "projectId": "729ce44a-2f9d-4c4d-a42c-930691662dce"
       }
     },
-    "owner": "sachaaa"
+    "owner": "sachaaa",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/729ce44a-2f9d-4c4d-a42c-930691662dce"
+    }
   }
 }
