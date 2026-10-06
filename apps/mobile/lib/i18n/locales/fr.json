@@ -9,7 +9,8 @@
     "orDivider": "- ou -",
     "continueAsGuest": "Continuer en tant qu'invité",
     "noAccount": "Pas encore de compte ?",
-    "signUp": "S'inscrire"
+    "signUp": "S'inscrire",
+    "signingIn": "Connexion…"
   },
   "navigation": {
     "training": "Entraînement",
@@ -43,5 +44,20 @@
   "common": {
     "showPassword": "Afficher le mot de passe",
     "hidePassword": "Masquer le mot de passe"
+  },
+  "signUp": {
+    "title": "Créer un compte",
+    "submit": "Créer mon compte",
+    "submitting": "Création…",
+    "hasAccount": "Déjà un compte ?"
+  },
+  "authErrors": {
+    "invalidEmail": "Adresse e-mail invalide",
+    "passwordTooShort": "Au moins {{count}} caractères",
+    "emailTaken": "Cette adresse e-mail est déjà utilisée",
+    "invalidCredentials": "E-mail ou mot de passe incorrect",
+    "network": "Connexion impossible. Vérifie ton réseau et réessaie.",
+    "unknown": "Une erreur est survenue. Réessaie.",
+    "passwordRequired": "Mot de passe requis"
   }
 }

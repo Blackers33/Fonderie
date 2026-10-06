@@ -9,7 +9,8 @@
     "orDivider": "- or -",
     "continueAsGuest": "Continue as Guest",
     "noAccount": "Don't have an account?",
-    "signUp": "Sign up"
+    "signUp": "Sign up",
+    "signingIn": "Signing in…"
   },
   "navigation": {
     "training": "Training",
@@ -43,5 +44,20 @@
   "common": {
     "showPassword": "Show password",
     "hidePassword": "Hide password"
+  },
+  "signUp": {
+    "title": "Create an account",
+    "submit": "Create my account",
+    "submitting": "Creating…",
+    "hasAccount": "Already have an account?"
+  },
+  "authErrors": {
+    "invalidEmail": "Invalid email address",
+    "passwordTooShort": "At least {{count}} characters",
+    "emailTaken": "This email address is already in use",
+    "invalidCredentials": "Incorrect email or password",
+    "network": "Can't connect. Check your network and try again.",
+    "unknown": "Something went wrong. Please try again.",
+    "passwordRequired": "Password required"
   }
 }

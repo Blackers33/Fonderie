@@ -5,8 +5,9 @@ import { StatusBar } from 'expo-status-bar'
 import { useEffect } from 'react'
 import 'react-native-reanimated'
 import { PortalHost } from '@rn-primitives/portal'
+import * as SplashScreen from 'expo-splash-screen'
 import { useColorScheme as useNativewindColorScheme } from 'nativewind'
-
+import { IdentityProvider, useIdentity } from '@/lib/auth/identity-context'
 import '../global.css'
 import '@/lib/i18n'
 import { useColorScheme } from '@/hooks/use-color-scheme'
@@ -14,9 +15,8 @@ import { db } from '@/lib/db/client'
 import { NAV_THEME } from '@/lib/theme'
 import migrations from '../drizzle/migrations'
 
-export const unstable_settings = {
-  anchor: 'auth',
-}
+// Garde le splash natif affiché jusqu'à ce que RootNavigator appelle hideAsync()
+SplashScreen.preventAutoHideAsync()
 
 export default function RootLayout() {
   const colorScheme = useColorScheme()
@@ -39,13 +39,38 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? NAV_THEME.dark : NAV_THEME.light}>
-      <Stack>
-        <Stack.Screen name="auth" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
+      <IdentityProvider>
+        <RootNavigator />
+      </IdentityProvider>
       <StatusBar style="auto" />
       <PortalHost />
     </ThemeProvider>
+  )
+}
+
+function RootNavigator() {
+  const { identity, isLoading } = useIdentity()
+
+  useEffect(() => {
+    if (!isLoading) {
+      SplashScreen.hideAsync()
+    }
+  }, [isLoading])
+
+  if (isLoading) {
+    return null // le splash natif est toujours affiché par-dessus
+  }
+
+  return (
+    <Stack>
+      <Stack.Protected guard={identity === null}>
+        <Stack.Screen name="auth" options={{ headerShown: false }} />
+        <Stack.Screen name="sign-up" />
+      </Stack.Protected>
+      <Stack.Protected guard={identity !== null}>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+      </Stack.Protected>
+    </Stack>
   )
 }
