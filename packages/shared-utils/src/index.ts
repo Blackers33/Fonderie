@@ -3,6 +3,7 @@ export function getHelloWorld(): string {
   return 'Hello World'
 }
 
+export * from './auth-types'
 /*
  * Note : l'erreur'
  * "Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is

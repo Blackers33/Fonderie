@@ -31,7 +31,7 @@ describe('AuthService', () => {
   })
 
   describe('register', () => {
-    it('creates the user and returns a token containing their id', async () => {
+    it('creates the user and returns a token and a userId', async () => {
       db.limit.mockResolvedValue([]) // aucun utilisateur existant avec cet email
       db.values.mockResolvedValue(undefined)
 
@@ -43,6 +43,7 @@ describe('AuthService', () => {
 
       const payload = jwt.decode(result.accessToken) as { sub: string }
       expect(payload.sub).toBe('user-1')
+      expect(result.userId).toBe('user-1')
       expect(db.insert).toHaveBeenCalled()
     })
 
@@ -55,10 +56,23 @@ describe('AuthService', () => {
         service.register({ id: 'user-1', email: 'a@test.com', password: 'password123' }),
       ).rejects.toThrow(ConflictException)
     })
+
+    it('throws ConflictException when the id is already used', async () => {
+      db.limit
+        .mockResolvedValueOnce([]) // 1er select (email) : libre
+        .mockResolvedValueOnce([
+          { id: 'user-1', email: 'other@test.com', passwordHash: 'x', createdAt: 0 },
+        ]) // 2e select (id) : déjà pris
+
+      await expect(
+        service.register({ id: 'user-1', email: 'a@test.com', password: 'password123' }),
+      ).rejects.toThrow('User id already in use')
+      expect(db.insert).not.toHaveBeenCalled()
+    })
   })
 
   describe('login', () => {
-    it('returns a token for valid credentials', async () => {
+    it('returns a token and the userId for valid credentials', async () => {
       const passwordHash = await argon2.hash('password123')
       db.limit.mockResolvedValue([
         { id: 'user-1', email: 'a@test.com', passwordHash, createdAt: 0 },
@@ -68,6 +82,7 @@ describe('AuthService', () => {
 
       const payload = jwt.decode(result.accessToken) as { sub: string }
       expect(payload.sub).toBe('user-1')
+      expect(result.userId).toBe('user-1')
     })
 
     it('throws UnauthorizedException when the email is unknown', async () => {
