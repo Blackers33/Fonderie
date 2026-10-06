@@ -1,76 +1,69 @@
+import { PASSWORD_MIN_LENGTH } from '@workspace/shared-utils'
 import * as Crypto from 'expo-crypto'
-import { useRouter } from 'expo-router'
+import { Stack, useRouter } from 'expo-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useColorScheme, View } from 'react-native'
+import { View } from 'react-native'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/ui/password-input'
 import { Text } from '@/components/ui/text'
-import { login } from '@/lib/auth/auth-api'
+import { register } from '@/lib/auth/auth-api'
 import type { AuthErrorCode } from '@/lib/auth/auth-errors'
 import { useIdentity } from '@/lib/auth/identity-context'
-import { validateEmail } from '@/lib/auth/sign-up-validation'
+import { validateEmail, validatePassword } from '@/lib/auth/sign-up-validation'
 
-export default function AuthScreen() {
+export default function SignUpScreen() {
   const router = useRouter()
   const { t } = useTranslation()
-  const colorScheme = useColorScheme()
   const { updateIdentity } = useIdentity()
-  const isDark = colorScheme === 'dark'
-  const containerClassName = isDark
-    ? 'flex-1 items-center justify-center bg-background px-6 py-10'
-    : 'flex-1 items-center justify-center bg-card px-6 py-10'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [emailError, setEmailError] = useState<'invalidEmail' | null>(null)
-  const [passwordError, setPasswordError] = useState<'passwordRequired' | null>(null)
+  const [passwordError, setPasswordError] = useState<'passwordTooShort' | null>(null)
   const [submitError, setSubmitError] = useState<AuthErrorCode | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   function handleEmailChange(text: string) {
-    const value = text.trim()
+    const value = text.trim() // les claviers ajoutent une espace après une suggestion
     setEmail(value)
-    if (emailError) setEmailError(validateEmail(value))
+    if (emailError) setEmailError(validateEmail(value)) // revalide seulement si une erreur est affichée
   }
 
   function handlePasswordChange(text: string) {
     setPassword(text)
-    if (passwordError && text !== '') setPasswordError(null)
+    if (passwordError) setPasswordError(validatePassword(text))
   }
 
-  async function handleSignIn() {
+  async function handleSubmit() {
     const nextEmailError = validateEmail(email)
-    // Pas de règle de longueur : elle concerne la création, pas la vérification
-    const nextPasswordError = password === '' ? 'passwordRequired' : null
+    const nextPasswordError = validatePassword(password)
     setEmailError(nextEmailError)
     setPasswordError(nextPasswordError)
     if (nextEmailError || nextPasswordError) return
 
     setSubmitError(null)
     setIsSubmitting(true)
-    const result = await login(email, password)
+    const result = await register(Crypto.randomUUID(), email, password)
     if (!result.ok) {
       setSubmitError(result.error)
       setIsSubmitting(false)
       return
     }
+    // Succès : Stack.Protected démonte cet écran, inutile de remettre isSubmitting à false
     await updateIdentity({ userId: result.data.userId, accessToken: result.data.accessToken })
   }
 
   return (
-    <View className={containerClassName}>
-      <Text className="text-xl font-bold text-foreground">{t('auth.appName')}</Text>
-      <Text className="text-sm text-muted-foreground">{t('auth.tagline')}</Text>
-      <View className="h-8 w-full opacity-0" />
+    <View className="flex-1 items-center justify-center bg-background px-6 py-10">
+      <Stack.Screen options={{ title: t('signUp.title') }} />
       <Card className="w-full max-w-sm">
         <CardContent>
           <View className="w-full justify-center gap-4">
             <View className="gap-2">
               <Text className="text-sm font-medium text-foreground">{t('auth.email')}</Text>
               <Input
-                id="email"
                 placeholder={t('auth.emailPlaceholder')}
                 keyboardType="email-address"
                 autoCapitalize="none"
@@ -86,15 +79,16 @@ export default function AuthScreen() {
             <View className="gap-2">
               <Text className="text-sm font-medium text-foreground">{t('auth.password')}</Text>
               <PasswordInput
-                id="password"
                 placeholder="••••••••"
-                autoComplete="current-password"
-                autoCapitalize="none"
+                autoComplete="new-password"
                 value={password}
                 onChangeText={handlePasswordChange}
+                onBlur={() => password !== '' && setPasswordError(validatePassword(password))}
               />
               {passwordError && (
-                <Text className="text-xs text-destructive">{t(`authErrors.${passwordError}`)}</Text>
+                <Text className="text-xs text-destructive">
+                  {t(`authErrors.${passwordError}`, { count: PASSWORD_MIN_LENGTH })}
+                </Text>
               )}
             </View>
           </View>
@@ -103,23 +97,15 @@ export default function AuthScreen() {
           {submitError && (
             <Text className="text-xs text-destructive">{t(`authErrors.${submitError}`)}</Text>
           )}
-          <Button className="w-full" disabled={isSubmitting} onPress={handleSignIn}>
-            <Text>{isSubmitting ? t('auth.signingIn') : t('auth.signIn')}</Text>
+          <Button className="w-full" disabled={isSubmitting} onPress={handleSubmit}>
+            <Text>{isSubmitting ? t('signUp.submitting') : t('signUp.submit')}</Text>
           </Button>
-          <Text className="text-xs text-muted-foreground">{t('auth.orDivider')}</Text>
-          <Button
-            variant="outline"
-            className="w-full"
-            disabled={isSubmitting}
-            onPress={() => updateIdentity({ userId: Crypto.randomUUID(), accessToken: null })}
-          >
-            <Text>{t('auth.continueAsGuest')}</Text>
-          </Button>
+
           <View className="h-4 w-full opacity-0" />
           <Text className="text-xs text-muted-foreground">
-            {t('auth.noAccount')}{' '}
-            <Text className="underline text-xs" onPress={() => router.push('/sign-up')}>
-              {t('auth.signUp')}
+            {t('signUp.hasAccount')}{' '}
+            <Text className="underline text-xs" onPress={() => router.back()}>
+              {t('auth.signIn')}
             </Text>
           </Text>
         </CardFooter>
