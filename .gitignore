@@ -385,3 +385,6 @@ $RECYCLE.BIN/
 
 # Local Claude context
 CLAUDE.md
+
+# Agents
+/.agents

@@ -32,3 +32,6 @@ _Avoid_: sync, import
 **Catalog Sync**:
 La mise à jour de la copie locale du catalogue d'exercices depuis le serveur.
 _Avoid_: sync (seul), import
+
+**Exercise Type**
+la catégorie d'un exercice affichée à l'utilisateur : un regroupement de muscles, ou Cardio
