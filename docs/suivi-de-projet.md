@@ -18,7 +18,6 @@ révisable. La clôture d'un jalon est le point de validation : voir
 | GitHub Project | Le kanban de toutes les issues |
 | Issues `story` | La valeur utilisateur (« En tant que… ») |
 | Autres issues | Le travail technique : dette, bugs, tâches |
-| `CLAUDE.md` | Le fonctionnement du projet |
 | `GLOSSARY.md` | Le vocabulaire du domaine |
 | `docs/adr/` | Le pourquoi des grandes décisions |
 
@@ -90,7 +89,7 @@ Contenu, date cible et vérification iOS : voir la description de chaque
 
 
 ## Décisions produit prises au passage
-
+*
 
 - Pas d'unicité des noms de routine.
 - Poids ≥ 0 en kg, virgule ou point acceptés.
