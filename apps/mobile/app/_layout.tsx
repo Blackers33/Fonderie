@@ -10,6 +10,7 @@ import { useColorScheme as useNativewindColorScheme } from 'nativewind'
 import { IdentityProvider, useIdentity } from '@/lib/auth/identity-context'
 import '../global.css'
 import '@/lib/i18n'
+import { registerDevMenuItems } from 'expo-dev-menu'
 import { useColorScheme } from '@/hooks/use-color-scheme'
 import { db } from '@/lib/db/client'
 import { NAV_THEME } from '@/lib/theme'
@@ -49,13 +50,22 @@ export default function RootLayout() {
 }
 
 function RootNavigator() {
-  const { identity, isLoading } = useIdentity()
+  const { identity, isLoading, clearIdentity } = useIdentity()
 
   useEffect(() => {
     if (!isLoading) {
       SplashScreen.hideAsync()
     }
   }, [isLoading])
+
+  useEffect(() => {
+    // Module natif absent en release : l'appeler hors dev ferait planter l'app
+    if (!__DEV__) return
+    // Rejouer l'onboarding sans vider le cache de l'application : supprimer l'identité stockée, puis re rendu
+    registerDevMenuItems([
+      { name: 'Reset identity', callback: clearIdentity, shouldCollapse: true },
+    ])
+  }, [clearIdentity])
 
   if (isLoading) {
     return null // le splash natif est toujours affiché par-dessus

@@ -12,6 +12,7 @@ type IdentityContextValue = {
   identity: Identity | null
   isLoading: boolean
   updateIdentity: (identity: Identity) => Promise<void>
+  clearIdentity: () => Promise<void>
 }
 
 const IdentityContext = createContext<IdentityContextValue | null>(null)
@@ -52,8 +53,13 @@ export function IdentityProvider({ children }: PropsWithChildren) {
     setIdentity(newIdentity) // déclenche le re-rendu → Stack.Protected redirige
   }
 
+  async function clearIdentity() {
+    await clearStoredIdentity()
+    setIdentity(null)
+  }
+
   return (
-    <IdentityContext.Provider value={{ identity, isLoading, updateIdentity }}>
+    <IdentityContext.Provider value={{ identity, isLoading, updateIdentity, clearIdentity }}>
       {children}
     </IdentityContext.Provider>
   )
