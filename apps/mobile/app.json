@@ -23,11 +23,6 @@
       "predictiveBackGestureEnabled": false,
       "package": "com.fonderie.app"
     },
-    "web": {
-      "output": "static",
-      "favicon": "./assets/images/favicon.png",
-      "bundler": "metro"
-    },
     "plugins": [
       "expo-router",
       [

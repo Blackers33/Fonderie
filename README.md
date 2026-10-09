@@ -83,7 +83,6 @@ pnpm build
 pnpm --filter @workspace/mobile dev
 pnpm --filter @workspace/mobile android
 pnpm --filter @workspace/mobile ios
-pnpm --filter @workspace/mobile web
 ```
 
 ### API (apps/api)
