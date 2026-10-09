@@ -6,7 +6,6 @@ import { useEffect } from 'react'
 import 'react-native-reanimated'
 import { PortalHost } from '@rn-primitives/portal'
 import * as SplashScreen from 'expo-splash-screen'
-import { useColorScheme as useNativewindColorScheme } from 'nativewind'
 import { IdentityProvider, useIdentity } from '@/lib/auth/identity-context'
 import '../global.css'
 import '@/lib/i18n'
@@ -21,12 +20,8 @@ SplashScreen.preventAutoHideAsync()
 
 export default function RootLayout() {
   const colorScheme = useColorScheme()
-  const { setColorScheme } = useNativewindColorScheme()
-  const { success, error } = useMigrations(db, migrations)
 
-  useEffect(() => {
-    setColorScheme(colorScheme ?? 'light')
-  }, [colorScheme, setColorScheme])
+  const { success, error } = useMigrations(db, migrations)
 
   useEffect(() => {
     if (error) {

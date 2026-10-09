@@ -1,6 +1,7 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import { Platform, Pressable } from 'react-native'
 import { TextClassContext } from '@/components/ui/text'
+import { PRIMARY_GLOW } from '@/lib/theme'
 import { cn } from '@/lib/utils'
 
 const buttonVariants = cva(
@@ -14,7 +15,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: cn(
-          'bg-primary active:bg-primary/90 shadow-sm shadow-black/5',
+          'bg-primary active:opacity-80',
           Platform.select({ web: 'hover:bg-primary/90' }),
         ),
         destructive: cn(
@@ -52,6 +53,13 @@ const buttonVariants = cva(
     },
   },
 )
+
+// Glow « métal en fusion » du bouton primaire : liseré net + lueur intérieure + halo extérieur.
+// La géométrie vit ici, les couleurs dans lib/theme.ts.
+// Construit une seule fois au chargement du module : référence stable, aucune allocation au render.
+const primaryGlowStyle = {
+  boxShadow: `inset 0 0 0 1px ${PRIMARY_GLOW.ring}, inset 0 0 10px ${PRIMARY_GLOW.inner}, 0 0 8px 2px ${PRIMARY_GLOW.outer}`,
+}
 
 const buttonTextVariants = cva(
   cn(
@@ -91,11 +99,15 @@ const buttonTextVariants = cva(
 type ButtonProps = React.ComponentProps<typeof Pressable> & VariantProps<typeof buttonVariants>
 
 function Button({ className, variant, size, ...props }: ButtonProps) {
+  // `variant` vaut undefined quand on ne le précise pas → c'est aussi le bouton primaire
+  const isPrimary = (variant ?? 'default') === 'default'
+
   return (
     <TextClassContext.Provider value={buttonTextVariants({ variant, size })}>
       <Pressable
         className={cn(props.disabled && 'opacity-50', buttonVariants({ variant, size }), className)}
         role="button"
+        style={isPrimary ? primaryGlowStyle : undefined}
         {...props}
       />
     </TextClassContext.Provider>

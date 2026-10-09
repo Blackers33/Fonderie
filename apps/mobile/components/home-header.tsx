@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { useColorScheme, View } from 'react-native'
+import { View } from 'react-native'
 import { Text } from '@/components/ui/text'
 import { Flame } from '@/lib/icons/flame'
 import { TrendingUp } from '@/lib/icons/trending-up'
@@ -9,8 +9,6 @@ import { Card } from './ui/card'
 
 function HomeHeader() {
   const { t } = useTranslation()
-  const colorScheme = useColorScheme()
-  const isDark = colorScheme === 'dark'
 
   return (
     <View className="gap-4 p-0">
@@ -38,10 +36,7 @@ function HomeHeader() {
 
       <View className="flex-row items-center justify-between">
         <Text className="text-base font-semibold">{t('home.myRoutines')}</Text>
-        <Button
-          className={!isDark ? 'border-border' : undefined}
-          onPress={() => console.log('Add routine')}
-        >
+        <Button onPress={() => console.log('Add routine')}>
           <Text>+</Text>
         </Button>
       </View>

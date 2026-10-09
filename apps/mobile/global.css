@@ -1,3 +1,4 @@
+/* à garder synchronisé avec lib/theme.ts */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -10,15 +11,15 @@
     --card-foreground: 0 0% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
-    --primary: 67.06, 100%, 50%;
+    --primary: 35 100% 50%;
     --primary-foreground: 0 0% 9%;
     --secondary: 0 0% 96.1%;
     --secondary-foreground: 0 0% 9%;
     --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
+    --muted-foreground: 240 2.26% 56.67%;
     --accent: 0 0% 96.1%;
     --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 78% 64%;
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
     --ring: 0 0% 63%;
@@ -37,12 +38,12 @@
     --card-foreground: 0 0% 98%;
     --popover: 205 14.63% 16.08%;
     --popover-foreground: 0 0% 98%;
-    --primary: 67.06, 100%, 50%;
+    --primary: 30 100% 50%;
     --primary-foreground: 0 0% 9%;
     --secondary: 0 0% 14.9%;
     --secondary-foreground: 0 0% 98%;
     --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
+    --muted-foreground: 240 2.26% 56.67%;
     --accent: 0 0% 14.9%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 70.9% 59.4%;
