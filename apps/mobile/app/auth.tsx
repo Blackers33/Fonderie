@@ -1,8 +1,9 @@
 import * as Crypto from 'expo-crypto'
 import { useRouter } from 'expo-router'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useColorScheme, View } from 'react-native'
+import { type TextInput, View } from 'react-native'
+import { KeyboardAwareScreen } from '@/components/keyboard-aware-screen'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -16,18 +17,14 @@ import { validateEmail } from '@/lib/auth/sign-up-validation'
 export default function AuthScreen() {
   const router = useRouter()
   const { t } = useTranslation()
-  const colorScheme = useColorScheme()
   const { updateIdentity } = useIdentity()
-  const isDark = colorScheme === 'dark'
-  const containerClassName = isDark
-    ? 'flex-1 items-center justify-center bg-background px-6 py-10'
-    : 'flex-1 items-center justify-center bg-card px-6 py-10'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [emailError, setEmailError] = useState<'invalidEmail' | null>(null)
   const [passwordError, setPasswordError] = useState<'passwordRequired' | null>(null)
   const [submitError, setSubmitError] = useState<AuthErrorCode | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const passwordRef = useRef<TextInput>(null)
 
   function handleEmailChange(text: string) {
     const value = text.trim()
@@ -41,6 +38,7 @@ export default function AuthScreen() {
   }
 
   async function handleSignIn() {
+    if (isSubmitting) return
     const nextEmailError = validateEmail(email)
     // Pas de règle de longueur : elle concerne la création, pas la vérification
     const nextPasswordError = password === '' ? 'passwordRequired' : null
@@ -60,7 +58,7 @@ export default function AuthScreen() {
   }
 
   return (
-    <View className={containerClassName}>
+    <KeyboardAwareScreen className="bg-background">
       <Text className="text-xl font-bold text-foreground">{t('auth.appName')}</Text>
       <Text className="text-sm text-muted-foreground">{t('auth.tagline')}</Text>
       <View className="h-8 w-full opacity-0" />
@@ -78,6 +76,9 @@ export default function AuthScreen() {
                 value={email}
                 onChangeText={handleEmailChange}
                 onBlur={() => email !== '' && setEmailError(validateEmail(email))}
+                returnKeyType="next"
+                submitBehavior="submit"
+                onSubmitEditing={() => passwordRef.current?.focus()}
               />
               {emailError && (
                 <Text className="text-xs text-destructive">{t(`authErrors.${emailError}`)}</Text>
@@ -92,6 +93,9 @@ export default function AuthScreen() {
                 autoCapitalize="none"
                 value={password}
                 onChangeText={handlePasswordChange}
+                ref={passwordRef}
+                returnKeyType="go"
+                onSubmitEditing={handleSignIn}
               />
               {passwordError && (
                 <Text className="text-xs text-destructive">{t(`authErrors.${passwordError}`)}</Text>
@@ -124,6 +128,6 @@ export default function AuthScreen() {
           </Text>
         </CardFooter>
       </Card>
-    </View>
+    </KeyboardAwareScreen>
   )
 }

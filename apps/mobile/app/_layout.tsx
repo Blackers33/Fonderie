@@ -10,6 +10,7 @@ import { IdentityProvider, useIdentity } from '@/lib/auth/identity-context'
 import '../global.css'
 import '@/lib/i18n'
 import { registerDevMenuItems } from 'expo-dev-menu'
+import { KeyboardProvider } from 'react-native-keyboard-controller'
 import { useColorScheme } from '@/hooks/use-color-scheme'
 import { db } from '@/lib/db/client'
 import { NAV_THEME } from '@/lib/theme'
@@ -34,13 +35,15 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? NAV_THEME.dark : NAV_THEME.light}>
-      <IdentityProvider>
-        <RootNavigator />
-      </IdentityProvider>
-      <StatusBar style="auto" />
-      <PortalHost />
-    </ThemeProvider>
+    <KeyboardProvider>
+      <ThemeProvider value={colorScheme === 'dark' ? NAV_THEME.dark : NAV_THEME.light}>
+        <IdentityProvider>
+          <RootNavigator />
+        </IdentityProvider>
+        <StatusBar style="auto" />
+        <PortalHost />
+      </ThemeProvider>
+    </KeyboardProvider>
   )
 }
 
