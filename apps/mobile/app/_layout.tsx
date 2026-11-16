@@ -13,6 +13,11 @@ import { registerDevMenuItems } from 'expo-dev-menu'
 import { KeyboardProvider } from 'react-native-keyboard-controller'
 import { useColorScheme } from '@/hooks/use-color-scheme'
 import { db } from '@/lib/db/client'
+import {
+  ensureRestTimerChannel,
+  requestNotificationPermission,
+  scheduleRestTimerEnd,
+} from '@/lib/notifications/rest-timer-notifications'
 import { NAV_THEME } from '@/lib/theme'
 import migrations from '../drizzle/migrations'
 
@@ -62,6 +67,8 @@ function RootNavigator() {
     // Rejouer l'onboarding sans vider le cache de l'application : supprimer l'identité stockée, puis re rendu
     registerDevMenuItems([
       { name: 'Reset identity', callback: clearIdentity, shouldCollapse: true },
+      // shouldCollapse : ferme le menu, sinon il masque la demande de permission
+      { name: 'Test notification (60 s)', callback: testRestNotification, shouldCollapse: true },
     ])
   }, [clearIdentity])
 
@@ -81,4 +88,17 @@ function RootNavigator() {
       </Stack.Protected>
     </Stack>
   )
+}
+
+// SPIKE TP — à supprimer quand #50 sera branché sur le vrai minuteur.
+// Mesure le délai réel de livraison, téléphone verrouillé.
+async function testRestNotification() {
+  await ensureRestTimerChannel('Rest timer') // canal AVANT la permission (Android 13)
+  const permission = await requestNotificationPermission()
+  console.log('[spike] notification permission:', permission)
+  if (permission !== 'granted') return
+
+  // L'heure prévue est écrite dans la notif : on la compare à l'heure d'arrivée
+  const due = new Date(Date.now() + 60_000).toLocaleTimeString()
+  await scheduleRestTimerEnd(60, { title: 'Spike', body: `Due at ${due}` })
 }
