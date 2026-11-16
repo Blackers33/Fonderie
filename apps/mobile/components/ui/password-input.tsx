@@ -6,7 +6,8 @@ import { Eye } from '@/lib/icons/eye'
 import { EyeOff } from '@/lib/icons/eye-off'
 import { cn } from '@/lib/utils'
 
-type PasswordInputProps = Omit<React.ComponentProps<typeof TextInput>, 'secureTextEntry'>
+type PasswordInputProps = Omit<React.ComponentProps<typeof TextInput>, 'secureTextEntry'> &
+  React.RefAttributes<TextInput>
 
 function PasswordInput({ className, ...props }: PasswordInputProps) {
   const [isRevealed, setIsRevealed] = React.useState(false)

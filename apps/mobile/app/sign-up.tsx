@@ -1,9 +1,10 @@
 import { PASSWORD_MIN_LENGTH } from '@workspace/shared-utils'
 import * as Crypto from 'expo-crypto'
 import { Stack, useRouter } from 'expo-router'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { View } from 'react-native'
+import { type TextInput, View } from 'react-native'
+import { KeyboardAwareScreen } from '@/components/keyboard-aware-screen'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -24,6 +25,7 @@ export default function SignUpScreen() {
   const [passwordError, setPasswordError] = useState<'passwordTooShort' | null>(null)
   const [submitError, setSubmitError] = useState<AuthErrorCode | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const passwordRef = useRef<TextInput>(null)
 
   function handleEmailChange(text: string) {
     const value = text.trim() // les claviers ajoutent une espace après une suggestion
@@ -37,6 +39,7 @@ export default function SignUpScreen() {
   }
 
   async function handleSubmit() {
+    if (isSubmitting) return
     const nextEmailError = validateEmail(email)
     const nextPasswordError = validatePassword(password)
     setEmailError(nextEmailError)
@@ -56,7 +59,7 @@ export default function SignUpScreen() {
   }
 
   return (
-    <View className="flex-1 items-center justify-center bg-background px-6 py-10">
+    <KeyboardAwareScreen className="bg-background">
       <Stack.Screen options={{ title: t('signUp.title') }} />
       <Card className="w-full max-w-sm">
         <CardContent>
@@ -64,6 +67,7 @@ export default function SignUpScreen() {
             <View className="gap-2">
               <Text className="text-sm font-medium text-foreground">{t('auth.email')}</Text>
               <Input
+                returnKeyType="next"
                 placeholder={t('auth.emailPlaceholder')}
                 keyboardType="email-address"
                 autoCapitalize="none"
@@ -71,6 +75,8 @@ export default function SignUpScreen() {
                 value={email}
                 onChangeText={handleEmailChange}
                 onBlur={() => email !== '' && setEmailError(validateEmail(email))}
+                submitBehavior="submit"
+                onSubmitEditing={() => passwordRef.current?.focus()}
               />
               {emailError && (
                 <Text className="text-xs text-destructive">{t(`authErrors.${emailError}`)}</Text>
@@ -79,11 +85,14 @@ export default function SignUpScreen() {
             <View className="gap-2">
               <Text className="text-sm font-medium text-foreground">{t('auth.password')}</Text>
               <PasswordInput
+                ref={passwordRef}
                 placeholder="••••••••"
                 autoComplete="new-password"
                 value={password}
                 onChangeText={handlePasswordChange}
                 onBlur={() => password !== '' && setPasswordError(validatePassword(password))}
+                returnKeyType="go"
+                onSubmitEditing={handleSubmit}
               />
               {passwordError && (
                 <Text className="text-xs text-destructive">
@@ -110,6 +119,6 @@ export default function SignUpScreen() {
           </Text>
         </CardFooter>
       </Card>
-    </View>
+    </KeyboardAwareScreen>
   )
 }
