@@ -13,6 +13,12 @@ import { registerDevMenuItems } from 'expo-dev-menu'
 import { KeyboardProvider } from 'react-native-keyboard-controller'
 import { useColorScheme } from '@/hooks/use-color-scheme'
 import { db } from '@/lib/db/client'
+import { seedDemoData } from '@/lib/dev/demo-seed'
+import {
+  ensureRestTimerChannel,
+  requestNotificationPermission,
+  scheduleRestTimerEnd,
+} from '@/lib/notifications/rest-timer-notifications'
 import { NAV_THEME } from '@/lib/theme'
 import migrations from '../drizzle/migrations'
 
@@ -59,11 +65,27 @@ function RootNavigator() {
   useEffect(() => {
     // Module natif absent en release : l'appeler hors dev ferait planter l'app
     if (!__DEV__) return
-    // Rejouer l'onboarding sans vider le cache de l'application : supprimer l'identité stockée, puis re rendu
+
+    // Créée À CHAQUE exécution de l'effet → voit l'identity du rendu courant (pas celle du 1er rendu)
+    async function seedForCurrentUser() {
+      if (identity === null) return // pas encore d'identité (onboarding) : rien à seeder
+      try {
+        await seedDemoData(identity.userId)
+      } catch (error) {
+        // Pas d'Alert : l'accueil (useLiveQuery) se remplira tout seul en cas de succès
+        console.error('[dev] seed failed:', error)
+      }
+    }
+
+    // registerDevMenuItems REMPLACE toute la liste : on redonne les 3 entrées à chaque fois
     registerDevMenuItems([
+      // Rejouer l'onboarding sans vider le cache de l'application : supprimer l'identité stockée, puis re rendu
       { name: 'Reset identity', callback: clearIdentity, shouldCollapse: true },
+      // shouldCollapse : ferme le menu, sinon il masque la demande de permission
+      { name: 'Test notification (60 s)', callback: testRestNotification, shouldCollapse: true },
+      { name: 'Seed demo data', callback: seedForCurrentUser, shouldCollapse: true },
     ])
-  }, [clearIdentity])
+  }, [identity, clearIdentity])
 
   if (isLoading) {
     return null // le splash natif est toujours affiché par-dessus
@@ -81,4 +103,17 @@ function RootNavigator() {
       </Stack.Protected>
     </Stack>
   )
+}
+
+// SPIKE TP — à supprimer quand #50 sera branché sur le vrai minuteur.
+// Mesure le délai réel de livraison, téléphone verrouillé.
+async function testRestNotification() {
+  await ensureRestTimerChannel('Rest timer') // canal AVANT la permission (Android 13)
+  const permission = await requestNotificationPermission()
+  console.log('[spike] notification permission:', permission)
+  if (permission !== 'granted') return
+
+  // L'heure prévue est écrite dans la notif : on la compare à l'heure d'arrivée
+  const due = new Date(Date.now() + 60_000).toLocaleTimeString()
+  await scheduleRestTimerEnd(60, { title: 'Spike', body: `Due at ${due}` })
 }

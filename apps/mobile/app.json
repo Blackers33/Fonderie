@@ -39,7 +39,21 @@
       ],
       "expo-localization",
       "expo-secure-store",
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Fonderie uses the camera for your progress photos. They never leave your phone.",
+          "recordAudioAndroid": false
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/android-icon-monochrome.png",
+          "color": "#FF8000"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
