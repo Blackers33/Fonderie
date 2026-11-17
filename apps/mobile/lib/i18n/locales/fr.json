@@ -23,7 +23,8 @@
     "thisWeek": "Cette semaine",
     "volume": "Volume",
     "days_one": "{{count}} jour",
-    "days_other": "{{count}} jours"
+    "days_other": "{{count}} jours",
+    "noRoutines": "Aucune routine pour l'instant"
   },
   "routineCard": {
     "exerciseCount_one": "{{count}} exercice",
