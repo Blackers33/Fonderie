@@ -3,6 +3,7 @@ import { db } from '@/lib/db/client'
 import { exercises, routines } from '@/lib/db/schema'
 
 // SEED DE DÉMO TEMPORAIRE (label `tp`) : à supprimer quand #65 et #34 seront faits.
+// La liste de tout ce qu'il faut retirer (mobile + script API) est dans #76.
 
 // Construit `count` séries identiques, pour ne pas recopier le même objet à la main
 function sets(count: number, reps: number, weight: number, restSeconds: number): TargetSet[] {
