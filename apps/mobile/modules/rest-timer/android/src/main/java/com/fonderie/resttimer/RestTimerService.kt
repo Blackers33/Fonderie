@@ -7,7 +7,6 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
-import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
@@ -68,9 +67,6 @@ class RestTimerService : Service() {
     handler.removeCallbacks(restEnded)
     handler.postDelayed(restEnded, remaining)
 
-    logPromotion(notification)
-    Log.d(LOG_TAG, "service started: ends in $remaining ms")
-
     // Processus tué par le système : ne pas recréer le service, le repos n'aurait plus de sens
     return START_NOT_STICKY
   }
@@ -80,7 +76,6 @@ class RestTimerService : Service() {
     handler.removeCallbacks(restEnded)
     // Sinon le processeur resterait éveillé jusqu'au timeout
     wakeLock.release()
-    Log.d(LOG_TAG, "service destroyed")
     super.onDestroy()
   }
 
@@ -132,16 +127,6 @@ class RestTimerService : Service() {
   // depuis la bibliothèque à la compilation, retrouvées par leur nom à l'exécution
   private fun appResource(name: String, type: String): Int =
     resources.getIdentifier(name, type, packageName)
-
-  // Exploration du spike : la Live Update est-elle acceptée, et sinon pourquoi
-  private fun logPromotion(notification: Notification) {
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.BAKLAVA) return // API 36
-    val manager = getSystemService(NotificationManager::class.java)
-    Log.d(
-      LOG_TAG,
-      "promotable=${notification.hasPromotableCharacteristics()} canPost=${manager.canPostPromotedNotifications()}",
-    )
-  }
 
   companion object {
     private const val EXTRA_ENDS_AT = "endsAt"
