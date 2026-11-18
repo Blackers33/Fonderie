@@ -1,12 +1,6 @@
 import { NativeModule, requireNativeModule } from 'expo'
 
-import { RestTimerModuleEvents } from './RestTimer.types'
+// Décrit ce que le Kotlin expose ; TypeScript ne peut pas le vérifier
+declare class RestTimerModule extends NativeModule {}
 
-declare class RestTimerModule extends NativeModule<RestTimerModuleEvents> {
-  PI: number
-  hello(): string
-  setValueAsync(value: string): Promise<void>
-}
-
-// This call loads the native module object from the JSI.
 export default requireNativeModule<RestTimerModule>('RestTimer')
