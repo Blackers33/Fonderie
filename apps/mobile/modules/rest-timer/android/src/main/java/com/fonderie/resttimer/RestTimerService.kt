@@ -1,6 +1,5 @@
 package com.fonderie.resttimer
 
-import android.app.AlarmManager
 import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -9,7 +8,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
+import android.os.PowerManager
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
@@ -20,17 +22,28 @@ import androidx.core.content.ContextCompat
 class RestTimerService : Service() {
 
   override fun onBind(intent: Intent?): IBinder? = null // démarré, jamais lié
-  // Repos en cours, relu quand l'alarme sonne
+
+  // Repos en cours, relu à la fin du repos
   private var endsAt = 0L
   private var doneTitle = ""
   private var doneBody = ""
 
-  // Toujours la même instance : c'est elle qu'on passe à cancel()
-  private val alarmListener = AlarmManager.OnAlarmListener { onRestEnded() }
+  // File de messages du thread principal : le Runnable y attend la fin du repos
+  private val handler = Handler(Looper.getMainLooper())
+  // Toujours la même instance : c'est elle qu'on passe à removeCallbacks()
+  private val restEnded = Runnable { onRestEnded() }
 
-  // Getters, pas valeurs : le contexte du service n'existe pas encore à sa construction
-  private val alarmManager: AlarmManager
-    get() = getSystemService(AlarmManager::class.java)
+  // Garde le processeur éveillé écran éteint, sinon le Handler s'endort avec lui.
+  // Doze ignore les wake locks, sauf pour un processus avec un service au premier plan.
+  // lazy : une seule instance, créée au premier usage, quand le contexte existe
+  private val wakeLock by lazy {
+    getSystemService(PowerManager::class.java)
+      .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Fonderie:RestTimer")
+      // Repos enchaînés : un seul release() suffit, même après plusieurs acquire()
+      .apply { setReferenceCounted(false) }
+  }
+
+  // Getter, pas valeur : le contexte du service n'existe pas encore à sa construction
   private val notificationManager: NotificationManager
     get() = getSystemService(NotificationManager::class.java)
 
@@ -46,13 +59,17 @@ class RestTimerService : Service() {
     val notification = buildCountdownNotification(endsAt, countdownTitle)
     // À appeler sans délai après startForegroundService(), sinon Android tue l'app
     ServiceCompat.startForeground(this, COUNTDOWN_NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
-    // Nouvelle série cochée : l'alarme du repos précédent est remplacée
-    alarmManager.cancel(alarmListener)
-    // Tag visible dans `adb shell dumpsys alarm` ; null : listener appelé sur le thread principal
-    alarmManager.setExact(AlarmManager.RTC_WAKEUP, endsAt, LOG_TAG, alarmListener, null)
+
+    val remaining = endsAt - System.currentTimeMillis()
+    // Timeout = filet de sécurité : si le Runnable ne passait jamais,
+    // le processeur ne resterait pas éveillé indéfiniment
+    wakeLock.acquire(remaining + WAKE_LOCK_MARGIN_MS)
+    // Nouvelle série cochée : la fin du repos précédent est remplacée
+    handler.removeCallbacks(restEnded)
+    handler.postDelayed(restEnded, remaining)
 
     logPromotion(notification)
-    Log.d(LOG_TAG, "service started: ends in ${endsAt - System.currentTimeMillis()} ms")
+    Log.d(LOG_TAG, "service started: ends in $remaining ms")
 
     // Processus tué par le système : ne pas recréer le service, le repos n'aurait plus de sens
     return START_NOT_STICKY
@@ -60,7 +77,9 @@ class RestTimerService : Service() {
 
   override fun onDestroy() {
     // Stop / Passer / fin de séance : l'alerte ne doit plus partir
-    alarmManager.cancel(alarmListener)
+    handler.removeCallbacks(restEnded)
+    // Sinon le processeur resterait éveillé jusqu'au timeout
+    wakeLock.release()
     Log.d(LOG_TAG, "service destroyed")
     super.onDestroy()
   }
@@ -76,7 +95,6 @@ class RestTimerService : Service() {
       // Android arrondit à la seconde inférieure : décaler la cible donne un arrondi
       // supérieur (1:00 au départ, 0:00 à l'échéance, jamais -0:01 avant le retrait)
       .setWhen(endsAt + 999)
-
       .setUsesChronometer(true)
       .setChronometerCountDown(true)
       // Android 12+ peut retarder de 10 s la notif d'un service : trop pour un repos de 20 s
@@ -85,9 +103,9 @@ class RestTimerService : Service() {
       .setRequestPromotedOngoing(true)
       .build()
 
-  // Appelé par l'alarme, sur le thread principal
+  // Appelé par le Handler à la fin du repos, sur le thread principal
   private fun onRestEnded() {
-    // Mesure du retard réel de l'alarme (conservée après le spike)
+    // Mesure du retard réel de la fin du repos (conservée après le spike)
     Log.d(LOG_TAG, "rest ended: delay ${System.currentTimeMillis() - endsAt} ms")
     notificationManager.notify(ALERT_NOTIFICATION_ID, buildAlertNotification())
     // La notif de décompte et la pastille disparaissent avec le service
@@ -124,6 +142,7 @@ class RestTimerService : Service() {
       "promotable=${notification.hasPromotableCharacteristics()} canPost=${manager.canPostPromotedNotifications()}",
     )
   }
+
   companion object {
     private const val EXTRA_ENDS_AT = "endsAt"
     private const val EXTRA_COUNTDOWN_TITLE = "countdownTitle"
@@ -136,7 +155,8 @@ class RestTimerService : Service() {
     private const val ALERT_CHANNEL_ID = "rest-timer"
     // ≠ COUNTDOWN_NOTIFICATION_ID : la notif du service disparaît avec lui, l'alerte doit rester
     private const val ALERT_NOTIFICATION_ID = 2
-
+    // Le Runnable passe bien avant : la marge ne sert qu'en cas d'anomalie
+    private const val WAKE_LOCK_MARGIN_MS = 10_000L
 
     fun start(context: Context, endsAt: Long, texts: RestTimerTexts) {
       val intent = Intent(context, RestTimerService::class.java)
@@ -144,7 +164,6 @@ class RestTimerService : Service() {
         .putExtra(EXTRA_COUNTDOWN_TITLE, texts.countdownTitle)
         .putExtra(EXTRA_DONE_TITLE, texts.doneTitle)
         .putExtra(EXTRA_DONE_BODY, texts.doneBody)
-
       ContextCompat.startForegroundService(context, intent)
     }
 
@@ -153,4 +172,3 @@ class RestTimerService : Service() {
     }
   }
 }
-
