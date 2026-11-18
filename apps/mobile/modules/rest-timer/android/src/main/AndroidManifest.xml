@@ -1,2 +1,20 @@
-<manifest>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+  <!-- Tout service au premier plan (API 28+) -->
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+  <!-- Permission propre au type de service déclaré plus bas (API 34+) -->
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+  <!-- Live Updates : la notif ongoing peut devenir une pastille dans la barre d'état (Android 16+) -->
+  <uses-permission android:name="android.permission.POST_PROMOTED_NOTIFICATIONS" />
+
+  <application>
+    <service
+      android:name="com.fonderie.resttimer.RestTimerService"
+      android:exported="false"
+      android:foregroundServiceType="specialUse">
+      <!-- Justification du type specialUse, lue par la revue Play Store (pas par Android) -->
+      <property
+        android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+        android:value="Rest timer between workout sets: keeps an exact countdown and alerts the user when rest ends, while the screen is off." />
+    </service>
+  </application>
 </manifest>

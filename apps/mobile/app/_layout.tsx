@@ -15,6 +15,7 @@ import { useColorScheme } from '@/hooks/use-color-scheme'
 import { db } from '@/lib/db/client'
 import { seedDemoData } from '@/lib/dev/demo-seed'
 import {
+  ensureRestCountdownChannel,
   ensureRestTimerChannel,
   requestNotificationPermission,
   scheduleRestTimerEnd,
@@ -124,7 +125,10 @@ async function testRestNotification() {
 
 // SPIKE TP — à supprimer au branchement de #75 sur le vrai minuteur.
 // L'heure prévue est écrite dans l'alerte : on la compare à l'heure d'arrivée.
-function spikeRestTimer(seconds: number) {
+async function spikeRestTimer(seconds: number) {
+  // Les canaux doivent exister avant startForeground, sinon le service plante
+  await ensureRestCountdownChannel('Rest countdown')
+  await ensureRestTimerChannel('Rest timer')
   const endsAt = Date.now() + seconds * 1000
   RestTimer.startRestTimer(endsAt, {
     countdownTitle: 'Spike rest',

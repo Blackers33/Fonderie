@@ -1,6 +1,6 @@
 package com.fonderie.resttimer
-
-import android.util.Log
+import android.content.Context                         
+import expo.modules.kotlin.exception.Exceptions
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 import expo.modules.kotlin.records.Field
@@ -22,14 +22,18 @@ class RestTimerModule : Module() {
     // Doit correspondre à requireNativeModule('RestTimer') côté JS
     Name("RestTimer")
 
-    // endsAt : instant de fin, en millisecondes depuis l'epoch (même échelle que Date.now())
     Function("startRestTimer") { endsAt: Long, texts: RestTimerTexts ->
-      val delayMs = endsAt - System.currentTimeMillis()
-      Log.d(LOG_TAG, "start: ends in $delayMs ms, title=${texts.countdownTitle}")
+      RestTimerService.start(context, endsAt, texts)
     }
 
     Function("stopRestTimer") {
-      Log.d(LOG_TAG, "stop")
+      RestTimerService.stop(context)
     }
   }
+
+  // Contexte Android de l'app, nécessaire pour démarrer ou arrêter le service
+  private val context: Context
+    get() = appContext.reactContext ?: throw Exceptions.ReactContextLost()
+
+
 }

@@ -16,3 +16,7 @@ android {
     abortOnError false
   }
 }
+dependencies {
+  // NotificationCompat.setRequestPromotedOngoing (Live Updates) : à partir de 1.17.0
+  implementation "androidx.core:core:1.17.0"
+}
