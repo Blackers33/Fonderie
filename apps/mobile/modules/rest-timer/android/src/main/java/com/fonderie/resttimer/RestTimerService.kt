@@ -72,8 +72,11 @@ class RestTimerService : Service() {
       .setContentTitle(title)
       .setContentIntent(openAppIntent())
       .setOngoing(true)
-      // Chronomètre dessiné par Android jusqu'à endsAt, sans mise à jour de l'app
-      .setWhen(endsAt)
+      // Chronomètre dessiné par Android jusqu'à endsAt, sans mise à jour de l'app.
+      // Android arrondit à la seconde inférieure : décaler la cible donne un arrondi
+      // supérieur (1:00 au départ, 0:00 à l'échéance, jamais -0:01 avant le retrait)
+      .setWhen(endsAt + 999)
+
       .setUsesChronometer(true)
       .setChronometerCountDown(true)
       // Android 12+ peut retarder de 10 s la notif d'un service : trop pour un repos de 20 s
