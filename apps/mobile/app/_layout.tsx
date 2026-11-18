@@ -20,6 +20,7 @@ import {
   scheduleRestTimerEnd,
 } from '@/lib/notifications/rest-timer-notifications'
 import { NAV_THEME } from '@/lib/theme'
+import RestTimer from '@/modules/rest-timer'
 import migrations from '../drizzle/migrations'
 
 // Garde le splash natif affiché jusqu'à ce que RootNavigator appelle hideAsync()
@@ -77,13 +78,16 @@ function RootNavigator() {
       }
     }
 
-    // registerDevMenuItems REMPLACE toute la liste : on redonne les 3 entrées à chaque fois
+    // registerDevMenuItems REMPLACE toute la liste : on redonne les 6 entrées à chaque fois
     registerDevMenuItems([
       // Rejouer l'onboarding sans vider le cache de l'application : supprimer l'identité stockée, puis re rendu
       { name: 'Reset identity', callback: clearIdentity, shouldCollapse: true },
       // shouldCollapse : ferme le menu, sinon il masque la demande de permission
       { name: 'Test notification (60 s)', callback: testRestNotification, shouldCollapse: true },
       { name: 'Seed demo data', callback: seedForCurrentUser, shouldCollapse: true },
+      { name: 'Rest timer (60 s)', callback: () => spikeRestTimer(60), shouldCollapse: true },
+      { name: 'Rest timer (180 s)', callback: () => spikeRestTimer(180), shouldCollapse: true },
+      { name: 'Stop rest timer', callback: () => RestTimer.stopRestTimer(), shouldCollapse: true },
     ])
   }, [identity, clearIdentity])
 
@@ -116,4 +120,15 @@ async function testRestNotification() {
   // L'heure prévue est écrite dans la notif : on la compare à l'heure d'arrivée
   const due = new Date(Date.now() + 60_000).toLocaleTimeString()
   await scheduleRestTimerEnd(60, { title: 'Spike', body: `Due at ${due}` })
+}
+
+// SPIKE TP — à supprimer au branchement de #75 sur le vrai minuteur.
+// L'heure prévue est écrite dans l'alerte : on la compare à l'heure d'arrivée.
+function spikeRestTimer(seconds: number) {
+  const endsAt = Date.now() + seconds * 1000
+  RestTimer.startRestTimer(endsAt, {
+    countdownTitle: 'Spike rest',
+    doneTitle: 'Spike done',
+    doneBody: `Due at ${new Date(endsAt).toLocaleTimeString()}`,
+  })
 }
