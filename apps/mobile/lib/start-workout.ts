@@ -1,15 +1,12 @@
-import type { RoutineExerciseData } from '@workspace/shared-utils'
 import { and, eq, isNull } from 'drizzle-orm'
 import * as Crypto from 'expo-crypto'
 import { db } from '@/lib/db/client'
-import { performedSets, workouts } from '@/lib/db/schema'
+import { performedSets, routines, workouts } from '@/lib/db/schema'
 import { toPerformedSets } from '@/lib/performed-sets'
-
-type RoutineToStart = { id: string; name: string; exercisesData: RoutineExerciseData[] }
 
 // Renvoie l'id de la séance à ouvrir : celle en cours s'il y en a une,
 // sinon une nouvelle, copiée depuis la routine
-export function startWorkout(userId: string, routine: RoutineToStart): string {
+export function startWorkout(userId: string, routineId: string): string {
   const inProgress = db
     .select({ id: workouts.id })
     .from(workouts)
@@ -19,6 +16,12 @@ export function startWorkout(userId: string, routine: RoutineToStart): string {
 
   const workoutId = Crypto.randomUUID()
   const now = Date.now()
+  const routine = db
+    .select()
+    .from(routines)
+    .where(and(eq(routines.id, routineId), eq(routines.userId, userId)))
+    .get()
+  if (!routine) throw new Error('Routine not found')
 
   // Tout ou rien : jamais une séance en cours sans ses séries
   db.transaction(tx => {
