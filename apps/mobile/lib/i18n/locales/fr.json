@@ -33,6 +33,9 @@
     "setsCount_other": "{{count}} séries",
     "moreCount": "+{{count}} de plus"
   },
+  "routineDetail": {
+    "startWorkout": "Démarrer"
+  },
   "exerciseTypes": {
     "chest": "Pectoraux",
     "back": "Dos",
