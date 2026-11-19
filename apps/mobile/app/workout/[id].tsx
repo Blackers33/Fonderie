@@ -1,11 +1,13 @@
-import { Stack, useLocalSearchParams } from 'expo-router'
+import { router, Stack, useLocalSearchParams } from 'expo-router'
 import { useTranslation } from 'react-i18next'
-import { SectionList } from 'react-native'
+import { Alert, SectionList, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { SetRow } from '@/components/set-row'
+import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
 import { useWorkout } from '@/hooks/use-workout'
 import { useIdentity } from '@/lib/auth/identity-context'
+import { finishWorkout } from '@/lib/finish-workout'
 import { updateSetCompleted } from '@/lib/update-set-completed'
 
 export default function WorkoutScreen() {
@@ -13,6 +15,29 @@ export default function WorkoutScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const { identity } = useIdentity()
   const { name, sections } = useWorkout(identity?.userId ?? '', id)
+
+  function finish() {
+    finishWorkout(id)
+    router.back()
+  }
+
+  function handleFinish() {
+    const uncheckedCount = sections
+      .flatMap(section => section.data)
+      .filter(set => !set.completed).length
+    if (uncheckedCount === 0) {
+      finish()
+      return
+    }
+    Alert.alert(
+      t('workout.finishConfirmTitle'),
+      t('workout.finishConfirmMessage', { count: uncheckedCount }),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        { text: t('workout.finish'), onPress: finish },
+      ],
+    )
+  }
 
   return (
     <SafeAreaView edges={['bottom']} className="flex-1 bg-background">
@@ -34,6 +59,11 @@ export default function WorkoutScreen() {
           />
         )}
       />
+      <View className="p-4">
+        <Button onPress={handleFinish}>
+          <Text>{t('workout.finish')}</Text>
+        </Button>
+      </View>
     </SafeAreaView>
   )
 }

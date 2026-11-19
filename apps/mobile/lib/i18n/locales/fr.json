@@ -37,7 +37,11 @@
     "startWorkout": "Démarrer"
   },
   "workout": {
-    "setLine": "{{reps}} × {{weight, number}} kg"
+    "setLine": "{{reps}} × {{weight, number}} kg",
+    "finish": "Terminer",
+    "finishConfirmTitle": "Terminer la séance ?",
+    "finishConfirmMessage_one": "{{count}} série n'est pas cochée.",
+    "finishConfirmMessage_other": "{{count}} séries ne sont pas cochées."
   },
   "exerciseTypes": {
     "chest": "Pectoraux",
@@ -50,7 +54,8 @@
   },
   "common": {
     "showPassword": "Afficher le mot de passe",
-    "hidePassword": "Masquer le mot de passe"
+    "hidePassword": "Masquer le mot de passe",
+    "cancel": "Annuler"
   },
   "signUp": {
     "title": "Créer un compte",

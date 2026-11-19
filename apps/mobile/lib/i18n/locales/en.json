@@ -37,7 +37,11 @@
     "startWorkout": "Start"
   },
   "workout": {
-    "setLine": "{{reps}} × {{weight, number}} kg"
+    "setLine": "{{reps}} × {{weight, number}} kg",
+    "finish": "Finish",
+    "finishConfirmTitle": "Finish workout?",
+    "finishConfirmMessage_one": "{{count}} set is not checked.",
+    "finishConfirmMessage_other": "{{count}} sets are not checked."
   },
   "exerciseTypes": {
     "chest": "Chest",
@@ -50,7 +54,8 @@
   },
   "common": {
     "showPassword": "Show password",
-    "hidePassword": "Hide password"
+    "hidePassword": "Hide password",
+    "cancel": "Cancel"
   },
   "signUp": {
     "title": "Create an account",
