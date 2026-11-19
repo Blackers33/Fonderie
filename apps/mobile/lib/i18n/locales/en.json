@@ -36,6 +36,9 @@
   "routineDetail": {
     "startWorkout": "Start"
   },
+  "workout": {
+    "setLine": "{{reps}} × {{weight, number}} kg"
+  },
   "exerciseTypes": {
     "chest": "Chest",
     "back": "Back",

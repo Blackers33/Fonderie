@@ -36,6 +36,9 @@
   "routineDetail": {
     "startWorkout": "Démarrer"
   },
+  "workout": {
+    "setLine": "{{reps}} × {{weight, number}} kg"
+  },
   "exerciseTypes": {
     "chest": "Pectoraux",
     "back": "Dos",
