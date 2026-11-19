@@ -33,6 +33,17 @@
     "setsCount_other": "{{count}} séries",
     "moreCount": "+{{count}} de plus"
   },
+  "routineDetail": {
+    "startWorkout": "Démarrer"
+  },
+  "workout": {
+    "setLine": "{{reps}} × {{weight, number}} kg",
+    "finish": "Terminer",
+    "finishConfirmTitle": "Terminer la séance ?",
+    "finishConfirmMessage_one": "{{count}} série n'est pas cochée.",
+    "finishConfirmMessage_other": "{{count}} séries ne sont pas cochées.",
+    "skipRest": "Passer"
+  },
   "exerciseTypes": {
     "chest": "Pectoraux",
     "back": "Dos",
@@ -44,7 +55,8 @@
   },
   "common": {
     "showPassword": "Afficher le mot de passe",
-    "hidePassword": "Masquer le mot de passe"
+    "hidePassword": "Masquer le mot de passe",
+    "cancel": "Annuler"
   },
   "signUp": {
     "title": "Créer un compte",

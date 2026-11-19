@@ -8,7 +8,7 @@ import {
   MECHANICS,
   MUSCLES,
 } from '@workspace/shared-utils'
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
 // Table à ligne unique (id toujours = 1) : l'état local de l'app.
 // Purement mobile, jamais backupée — le serveur a sa propre table `users`.
@@ -85,6 +85,7 @@ export const performedSets = sqliteTable('performed_sets', {
   exerciseOrder: integer('exercise_order').notNull(),
   setOrder: integer('set_order').notNull(),
   reps: integer('reps').notNull(),
-  weight: integer('weight').notNull(),
+  weight: real('weight').notNull(),
+  restSeconds: integer('rest_seconds').notNull(),
   completed: integer('completed', { mode: 'boolean' }).notNull(),
 })

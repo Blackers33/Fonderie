@@ -8,7 +8,7 @@ import {
   MECHANICS,
   MUSCLES,
 } from '@workspace/shared-utils'
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
 export const users = sqliteTable('users', {
   id: text('id').primaryKey(), // même uuid que celui généré côté client en mode Invité
@@ -79,6 +79,7 @@ export const performedSets = sqliteTable('performed_sets', {
   exerciseOrder: integer('exercise_order').notNull(),
   setOrder: integer('set_order').notNull(),
   reps: integer('reps').notNull(),
-  weight: integer('weight').notNull(),
+  weight: real('weight').notNull(),
+  restSeconds: integer('rest_seconds').notNull(),
   completed: integer('completed', { mode: 'boolean' }).notNull(),
 })
