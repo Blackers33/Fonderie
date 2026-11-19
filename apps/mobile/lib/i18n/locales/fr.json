@@ -41,7 +41,8 @@
     "finish": "Terminer",
     "finishConfirmTitle": "Terminer la séance ?",
     "finishConfirmMessage_one": "{{count}} série n'est pas cochée.",
-    "finishConfirmMessage_other": "{{count}} séries ne sont pas cochées."
+    "finishConfirmMessage_other": "{{count}} séries ne sont pas cochées.",
+    "skipRest": "Passer"
   },
   "exerciseTypes": {
     "chest": "Pectoraux",

@@ -12,6 +12,7 @@ describe('toWorkoutSections', () => {
         reps: 8,
         weight: 60,
         completed: false,
+        restSeconds: 90,
       },
       {
         id: 's2',
@@ -21,6 +22,7 @@ describe('toWorkoutSections', () => {
         reps: 6,
         weight: 62.5,
         completed: false,
+        restSeconds: 90,
       },
     ]
 
@@ -37,6 +39,7 @@ describe('toWorkoutSections', () => {
         reps: 5,
         weight: 80,
         completed: false,
+        restSeconds: 90,
       },
       {
         id: 's2',
@@ -46,6 +49,7 @@ describe('toWorkoutSections', () => {
         reps: 12,
         weight: 50,
         completed: false,
+        restSeconds: 90,
       },
     ]
 
@@ -64,6 +68,7 @@ describe('toWorkoutSections', () => {
         reps: 10,
         weight: 15,
         completed: false,
+        restSeconds: 90,
       },
     ]
 

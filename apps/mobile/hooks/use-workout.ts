@@ -24,6 +24,7 @@ export function useWorkout(userId: string, workoutId: string) {
         reps: performedSets.reps,
         weight: performedSets.weight,
         completed: performedSets.completed,
+        restSeconds: performedSets.restSeconds,
       })
       .from(performedSets)
       .leftJoin(exercises, eq(exercises.id, performedSets.exerciseId))

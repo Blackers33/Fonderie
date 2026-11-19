@@ -7,13 +7,14 @@ type SetRowProps = {
   number: number
   label: string // déjà traduit : « 8 × 60 kg »
   completed: boolean
-  onToggle: (setId: string, completed: boolean) => void
+  restSeconds: number
+  onToggle: (setId: string, completed: boolean, restSeconds: number) => void
 }
 
-function SetRow({ setId, number, label, completed, onToggle }: SetRowProps) {
+function SetRow({ setId, number, label, completed, restSeconds, onToggle }: SetRowProps) {
   return (
     <Pressable
-      onPress={() => onToggle(setId, !completed)}
+      onPress={() => onToggle(setId, !completed, restSeconds)}
       className={cn(
         'flex-row items-center gap-4 rounded-md px-2 py-2',
         completed && 'bg-primary/15',

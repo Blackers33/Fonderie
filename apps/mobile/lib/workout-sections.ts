@@ -7,6 +7,7 @@ export type WorkoutSetRow = {
   reps: number
   weight: number
   completed: boolean
+  restSeconds: number
 }
 
 // Forme attendue par SectionList : un titre et ses lignes

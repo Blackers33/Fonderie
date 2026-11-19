@@ -41,7 +41,8 @@
     "finish": "Finish",
     "finishConfirmTitle": "Finish workout?",
     "finishConfirmMessage_one": "{{count}} set is not checked.",
-    "finishConfirmMessage_other": "{{count}} sets are not checked."
+    "finishConfirmMessage_other": "{{count}} sets are not checked.",
+    "skipRest": "Skip"
   },
   "exerciseTypes": {
     "chest": "Chest",

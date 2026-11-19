@@ -1,7 +1,9 @@
 import { router, Stack, useLocalSearchParams } from 'expo-router'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Alert, SectionList, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { RestTimer } from '@/components/rest-timer'
 import { SetRow } from '@/components/set-row'
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
@@ -15,6 +17,16 @@ export default function WorkoutScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const { identity } = useIdentity()
   const { name, sections } = useWorkout(identity?.userId ?? '', id)
+  // Échéance du repos en cours (epoch ms), null = pas de repos
+  const [restEndsAt, setRestEndsAt] = useState<number | null>(null)
+
+  function handleToggle(setId: string, completed: boolean, restSeconds: number) {
+    updateSetCompleted(setId, completed)
+    // Le repos démarre au cochage seulement ; 0 = pas de repos
+    if (completed && restSeconds > 0) {
+      setRestEndsAt(Date.now() + restSeconds * 1000)
+    }
+  }
 
   function finish() {
     finishWorkout(id)
@@ -55,11 +67,15 @@ export default function WorkoutScreen() {
             number={index + 1}
             label={t('workout.setLine', { reps: item.reps, weight: item.weight })}
             completed={item.completed}
-            onToggle={updateSetCompleted}
+            restSeconds={item.restSeconds}
+            onToggle={handleToggle}
           />
         )}
       />
-      <View className="p-4">
+      <View className="gap-3 p-4">
+        {restEndsAt !== null && (
+          <RestTimer restEndsAt={restEndsAt} onEnd={() => setRestEndsAt(null)} />
+        )}
         <Button onPress={handleFinish}>
           <Text>{t('workout.finish')}</Text>
         </Button>
