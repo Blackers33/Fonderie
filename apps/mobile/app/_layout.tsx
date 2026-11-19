@@ -104,6 +104,8 @@ function RootNavigator() {
       </Stack.Protected>
       <Stack.Protected guard={identity !== null}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="routine/[id]" />
+        <Stack.Screen name="workout/[id]" />
         <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
       </Stack.Protected>
     </Stack>

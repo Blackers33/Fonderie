@@ -1,3 +1,4 @@
+import { router } from 'expo-router'
 import { useTranslation } from 'react-i18next'
 import { FlatList } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -23,7 +24,7 @@ export default function HomeScreen() {
         data={routines}
         keyExtractor={routine => routine.id}
         renderItem={({ item }) => (
-          <RoutineCard routine={item} onPress={() => console.log('Open routine', item.id)} />
+          <RoutineCard routine={item} onPress={() => router.push(`/routine/${item.id}`)} />
         )}
         // Avant la 1ʳᵉ réponse de SQLite, la liste est vide sans l'être vraiment :
         // on n'affiche le message qu'une fois le chargement terminé.
