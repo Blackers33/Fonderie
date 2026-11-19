@@ -1,10 +1,12 @@
 import { Stack, useLocalSearchParams } from 'expo-router'
 import { useTranslation } from 'react-i18next'
-import { SectionList, View } from 'react-native'
+import { SectionList } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { SetRow } from '@/components/set-row'
 import { Text } from '@/components/ui/text'
 import { useWorkout } from '@/hooks/use-workout'
 import { useIdentity } from '@/lib/auth/identity-context'
+import { updateSetCompleted } from '@/lib/update-set-completed'
 
 export default function WorkoutScreen() {
   const { t } = useTranslation()
@@ -23,13 +25,13 @@ export default function WorkoutScreen() {
           <Text className="mt-4 mb-1 text-base font-semibold text-foreground">{section.title}</Text>
         )}
         renderItem={({ item, index }) => (
-          <View className="flex-row gap-4 py-1">
-            {/* Les séries sont numérotées à partir de 1 à l'écran */}
-            <Text className="w-6 text-muted-foreground">{index + 1}</Text>
-            <Text className="text-foreground">
-              {t('workout.setLine', { reps: item.reps, weight: item.weight })}
-            </Text>
-          </View>
+          <SetRow
+            setId={item.id}
+            number={index + 1}
+            label={t('workout.setLine', { reps: item.reps, weight: item.weight })}
+            completed={item.completed}
+            onToggle={updateSetCompleted}
+          />
         )}
       />
     </SafeAreaView>
