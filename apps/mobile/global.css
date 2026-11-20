@@ -1,59 +1,61 @@
-/* à garder synchronisé avec lib/theme.ts */
+/* Fonderie — palette « Braise » — à garder synchronisé avec lib/theme.ts
+   Triplets HSL SANS virgules : Tailwind compose hsl(var(--x) / alpha) */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 240 23.81% 95.88%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
+    --background: 36 26.3% 96.3%; /* #F8F6F3 */
+    --foreground: 22.5 16.7% 9.4%; /* #1C1714 */
+    --card: 0 0% 100%; /* #FFFFFF */
+    --card-foreground: 22.5 16.7% 9.4%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 35 100% 50%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 240 2.26% 56.67%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 78% 64%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 63%;
-    --radius: 2rem;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --popover-foreground: 22.5 16.7% 9.4%;
+
+    --primary: 12.7 79.3% 50.8%; /* #E5481E  braise */
+    --primary-foreground: 17.1 15.6% 8.8%; /* #1A1513 — 4,5:1 sur la braise */
+
+    --secondary: 30 23.8% 91.8%; /* #EFEAE5 */
+    --secondary-foreground: 22.5 16.7% 9.4%;
+    --muted: 30 23.8% 91.8%;
+    --muted-foreground: 26.3 8.1% 38.8%; /* #6B625B — 5,5:1 sur fond */
+    --accent: 16.9 84.2% 92.5%; /* #FCE5DC  braise pâle */
+    --accent-foreground: 13.5 81.2% 33.3%; /* #9A2F10 */
+
+    --destructive: 338.8 73.9% 45.1%; /* #C81E5A  framboise, distinct de la braise */
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 30 20% 86.3%; /* #E3DCD5 */
+    --input: 30 20% 86.3%;
+    --ring: 12.7 79.3% 50.8%;
+    --radius: 2rem; /* lu par rounded-lg/md/sm (tailwind.config.js) */
   }
 
+  /* Hérite de :root tout ce qu'il ne redéfinit pas (dont --radius) */
   .dark:root {
-    --background: 205 14.63% 16.08%;
-    --foreground: 0 0% 98%;
-    --card: 205 14.63% 20.5%;
-    --card-foreground: 0 0% 98%;
-    --popover: 205 14.63% 16.08%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 30 100% 50%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 240 2.26% 56.67%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 70.9% 59.4%;
-    --border: 0 0% 40%;
-    --input: 205 14.63% 24%;
-    --ring: 300 0% 45%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --background: 17.1 15.6% 8.8%; /* #1A1513  charbon chaud */
+    --foreground: 30 23.5% 93.3%; /* #F2EEEA */
+    --card: 24 15.2% 12.9%; /* #26201C */
+    --card-foreground: 30 23.5% 93.3%;
+    --popover: 17.1 15.6% 8.8%; /* = background */
+    --popover-foreground: 30 23.5% 93.3%;
+
+    --primary: 12.7 79.3% 50.8%; /* #E5481E — 4,6:1 sur fond sombre */
+    --primary-foreground: 17.1 15.6% 8.8%; /* #1A1513 */
+
+    --secondary: 21.8 13.6% 15.9%; /* #2E2723 */
+    --secondary-foreground: 30 23.5% 93.3%;
+    --muted: 21.8 13.6% 15.9%;
+    --muted-foreground: 28.2 8.5% 60.6%; /* #A39A92 — 6,5:1 sur fond */
+    --accent: 15 41.9% 16.9%; /* #3D2219 */
+    --accent-foreground: 15.8 85% 79%; /* #F7B49C */
+
+    --destructive: 340.5 78% 59%; /* #E8457A */
+    --destructive-foreground: 17.1 15.6% 8.8%;
+
+    --border: 23.1 12.6% 20.2%; /* #3A322D */
+    --input: 23.1 12.6% 20.2%;
+    --ring: 12.7 79.3% 50.8%;
   }
 }

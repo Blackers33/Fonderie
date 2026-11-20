@@ -31,9 +31,9 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
+          "backgroundColor": "#F8F6F3",
           "dark": {
-            "backgroundColor": "#000000"
+            "backgroundColor": "#1A1513"
           }
         }
       ],
@@ -44,7 +44,7 @@
         "expo-notifications",
         {
           "icon": "./assets/images/android-icon-monochrome.png",
-          "color": "#FF8000"
+          "color": "#E5481E"
         }
       ]
     ],
