@@ -65,6 +65,8 @@ class RestTimerService : Service() {
     wakeLock.acquire(remaining + WAKE_LOCK_MARGIN_MS)
     // Nouvelle série cochée : la fin du repos précédent est remplacée
     handler.removeCallbacks(restEnded)
+    // L'alerte du repos précédent, si elle est encore affichée, n'a plus lieu d'être
+    notificationManager.cancel(ALERT_NOTIFICATION_ID)
     handler.postDelayed(restEnded, remaining)
 
     // Processus tué par le système : ne pas recréer le service, le repos n'aurait plus de sens
@@ -153,6 +155,9 @@ class RestTimerService : Service() {
     }
 
     fun stop(context: Context) {
+      // Fin de séance : l'alerte du dernier repos ne doit pas traîner.
+      // Pas dans onDestroy : appelé aussi juste après l'alerte (stopSelf), il l'effacerait aussitôt
+      context.getSystemService(NotificationManager::class.java).cancel(ALERT_NOTIFICATION_ID)
       context.stopService(Intent(context, RestTimerService::class.java))
     }
   }
