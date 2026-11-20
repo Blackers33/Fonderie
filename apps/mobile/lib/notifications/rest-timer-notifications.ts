@@ -66,3 +66,10 @@ export function stopRest() {
   if (Platform.OS !== 'android') return
   RestTimer.stopRestTimer()
 }
+
+// Lit l'état sans afficher de demande (ex. retour des réglages)
+export async function getNotificationPermission(): Promise<NotificationPermission> {
+  const current = await Notifications.getPermissionsAsync()
+  if (current.granted) return 'granted'
+  return current.canAskAgain ? 'denied' : 'blocked'
+}

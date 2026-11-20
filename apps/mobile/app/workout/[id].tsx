@@ -1,7 +1,7 @@
 import { router, Stack, useLocalSearchParams } from 'expo-router'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Alert, Platform, SectionList, View } from 'react-native'
+import { Alert, AppState, Linking, Platform, SectionList, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { RestTimer } from '@/components/rest-timer'
 import { SetRow } from '@/components/set-row'
@@ -12,6 +12,7 @@ import { useIdentity } from '@/lib/auth/identity-context'
 import { finishWorkout } from '@/lib/finish-workout'
 import {
   ensureRestTimerChannels,
+  getNotificationPermission,
   type NotificationPermission,
   requestNotificationPermission,
   startRest,
@@ -35,6 +36,11 @@ export default function WorkoutScreen() {
       setPermission(await requestNotificationPermission())
     }
     askPermission()
+    // Retour des réglages (bouton « Ouvrir les réglages ») : la permission a pu changer
+    const subscription = AppState.addEventListener('change', state => {
+      if (state === 'active') getNotificationPermission().then(setPermission)
+    })
+    return () => subscription.remove()
   }, [])
 
   function handleToggle(setId: string, completed: boolean, restSeconds: number) {
@@ -75,6 +81,8 @@ export default function WorkoutScreen() {
       ],
     )
   }
+  // null (iOS, ou réponse pas encore reçue) : rien à signaler
+  const notificationsOff = permission === 'denied' || permission === 'blocked'
 
   return (
     <SafeAreaView edges={['bottom']} className="flex-1 bg-background">
@@ -83,6 +91,24 @@ export default function WorkoutScreen() {
         contentContainerClassName="p-4"
         sections={sections}
         keyExtractor={set => set.id}
+        ListHeaderComponent={
+          notificationsOff ? (
+            <View className="gap-1">
+              <Text className="text-sm text-muted-foreground">{t('workout.notificationsOff')}</Text>
+              {permission === 'blocked' && (
+                // Android ne réaffichera plus la demande : seul recours, les réglages de l'app
+                <Button
+                  variant="link"
+                  size="sm"
+                  className="self-start px-0"
+                  onPress={() => Linking.openSettings()}
+                >
+                  <Text>{t('workout.openSettings')}</Text>
+                </Button>
+              )}
+            </View>
+          ) : null
+        }
         renderSectionHeader={({ section }) => (
           <Text className="mt-4 mb-1 text-base font-semibold text-foreground">{section.title}</Text>
         )}

@@ -42,7 +42,9 @@
     "finishConfirmTitle": "Finish workout?",
     "finishConfirmMessage_one": "{{count}} set is not checked.",
     "finishConfirmMessage_other": "{{count}} sets are not checked.",
-    "skipRest": "Skip"
+    "skipRest": "Skip",
+    "notificationsOff": "Notifications are off: you'll only be alerted at the end of a rest while the app is open.",
+    "openSettings": "Open settings"
   },
   "restTimer": {
     "countdownChannel": "Rest countdown",
