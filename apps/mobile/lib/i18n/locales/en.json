@@ -44,6 +44,13 @@
     "finishConfirmMessage_other": "{{count}} sets are not checked.",
     "skipRest": "Skip"
   },
+  "restTimer": {
+    "countdownChannel": "Rest countdown",
+    "alertChannel": "Rest over",
+    "countdownTitle": "Resting",
+    "doneTitle": "Rest over",
+    "doneBody": "Time for your next set."
+  },
   "exerciseTypes": {
     "chest": "Chest",
     "back": "Back",

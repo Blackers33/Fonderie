@@ -44,6 +44,13 @@
     "finishConfirmMessage_other": "{{count}} séries ne sont pas cochées.",
     "skipRest": "Passer"
   },
+  "restTimer": {
+    "countdownChannel": "Décompte du repos",
+    "alertChannel": "Fin du repos",
+    "countdownTitle": "Repos en cours",
+    "doneTitle": "Repos terminé",
+    "doneBody": "Place à la série suivante."
+  },
   "exerciseTypes": {
     "chest": "Pectoraux",
     "back": "Dos",

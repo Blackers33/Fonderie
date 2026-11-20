@@ -1,5 +1,7 @@
 import * as Notifications from 'expo-notifications'
 import { Platform } from 'react-native'
+import i18n from '@/lib/i18n'
+import RestTimer from '@/modules/rest-timer'
 
 // Id stable : l'importance d'un canal est figée à sa création (Android 8+).
 // Pour la changer un jour, il faudra un nouvel id.
@@ -18,7 +20,7 @@ export async function ensureRestCountdownChannel(name: string) {
   })
 }
 
-// `name` est visible dans les réglages Android de l'app → à passer par t() dans #50
+// `name` est visible dans les réglages Android de l'app
 export async function ensureRestTimerChannel(name: string) {
   if (Platform.OS !== 'android') return
   await Notifications.setNotificationChannelAsync(REST_TIMER_CHANNEL_ID, {
@@ -51,4 +53,28 @@ export function scheduleRestTimerEnd(seconds: number, content: { title: string; 
       channelId: REST_TIMER_CHANNEL_ID,
     },
   })
+}
+
+// Les deux canaux doivent exister avant la demande de permission (Android 13)
+// et avant startRestTimer (sinon startForeground plante). Idempotent.
+export async function ensureRestTimerChannels() {
+  await ensureRestCountdownChannel(i18n.t('restTimer.countdownChannel'))
+  await ensureRestTimerChannel(i18n.t('restTimer.alertChannel'))
+}
+
+// Un nouvel appel remplace l'échéance du repos en cours
+export async function startRest(endsAt: number) {
+  if (Platform.OS !== 'android') return // service natif Android uniquement
+  await ensureRestTimerChannels()
+  // Textes lus à l'appel (et non à l'import) : toujours dans la langue courante
+  RestTimer.startRestTimer(endsAt, {
+    countdownTitle: i18n.t('restTimer.countdownTitle'),
+    doneTitle: i18n.t('restTimer.doneTitle'),
+    doneBody: i18n.t('restTimer.doneBody'),
+  })
+}
+
+export function stopRest() {
+  if (Platform.OS !== 'android') return
+  RestTimer.stopRestTimer()
 }

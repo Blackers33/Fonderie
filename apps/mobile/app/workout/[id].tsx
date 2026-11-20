@@ -1,7 +1,7 @@
 import { router, Stack, useLocalSearchParams } from 'expo-router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Alert, SectionList, View } from 'react-native'
+import { Alert, Platform, SectionList, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { RestTimer } from '@/components/rest-timer'
 import { SetRow } from '@/components/set-row'
@@ -10,6 +10,13 @@ import { Text } from '@/components/ui/text'
 import { useWorkout } from '@/hooks/use-workout'
 import { useIdentity } from '@/lib/auth/identity-context'
 import { finishWorkout } from '@/lib/finish-workout'
+import {
+  ensureRestTimerChannels,
+  type NotificationPermission,
+  requestNotificationPermission,
+  startRest,
+  stopRest,
+} from '@/lib/notifications/rest-timer-notifications'
 import { updateSetCompleted } from '@/lib/update-set-completed'
 
 export default function WorkoutScreen() {
@@ -19,16 +26,34 @@ export default function WorkoutScreen() {
   const { name, sections } = useWorkout(identity?.userId ?? '', id)
   // Échéance du repos en cours (epoch ms), null = pas de repos
   const [restEndsAt, setRestEndsAt] = useState<number | null>(null)
+  const [permission, setPermission] = useState<NotificationPermission | null>(null)
+
+  useEffect(() => {
+    if (Platform.OS !== 'android') return // pas de minuteur natif hors Android
+    async function askPermission() {
+      await ensureRestTimerChannels() // canaux avant la demande, sinon pas de pop-up (Android 13)
+      setPermission(await requestNotificationPermission())
+    }
+    askPermission()
+  }, [])
 
   function handleToggle(setId: string, completed: boolean, restSeconds: number) {
     updateSetCompleted(setId, completed)
     // Le repos démarre au cochage seulement ; 0 = pas de repos
     if (completed && restSeconds > 0) {
-      setRestEndsAt(Date.now() + restSeconds * 1000)
+      const endsAt = Date.now() + restSeconds * 1000
+      setRestEndsAt(endsAt)
+      startRest(endsAt) // même échéance pour l'écran et le service
     }
   }
 
+  function skipRest() {
+    stopRest() // sinon l'alerte native partirait quand même
+    setRestEndsAt(null)
+  }
+
   function finish() {
+    stopRest() // séance finie : plus d'alerte de repos
     finishWorkout(id)
     router.back()
   }
@@ -74,7 +99,12 @@ export default function WorkoutScreen() {
       />
       <View className="gap-3 p-4">
         {restEndsAt !== null && (
-          <RestTimer restEndsAt={restEndsAt} onEnd={() => setRestEndsAt(null)} />
+          <RestTimer
+            restEndsAt={restEndsAt}
+            vibrate={permission !== 'granted'} // sinon c'est l'alerte native qui prévient
+            onEnd={() => setRestEndsAt(null)}
+            onSkip={skipRest}
+          />
         )}
         <Button onPress={handleFinish}>
           <Text>{t('workout.finish')}</Text>
