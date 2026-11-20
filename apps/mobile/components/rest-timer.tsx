@@ -30,7 +30,7 @@ function RestTimer({ restEndsAt, vibrate, onEnd, onSkip }: RestTimerProps) {
   }, [remaining, vibrate, onEnd])
 
   return (
-    <View className="flex-row items-center justify-between rounded-md bg-primary/15 px-4 py-3">
+    <View className="flex-row items-center justify-between rounded-md border border-primary bg-card px-4 py-3">
       <Text className="text-2xl font-semibold text-foreground">{formatRest(remaining)}</Text>
       <Button variant="outline" onPress={onSkip}>
         <Text>{t('workout.skipRest')}</Text>

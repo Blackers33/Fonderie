@@ -28,6 +28,7 @@ export default function WorkoutScreen() {
   // Échéance du repos en cours (epoch ms), null = pas de repos
   const [restEndsAt, setRestEndsAt] = useState<number | null>(null)
   const [permission, setPermission] = useState<NotificationPermission | null>(null)
+  const [footerHeight, setFooterHeight] = useState(0)
 
   useEffect(() => {
     if (Platform.OS !== 'android') return // pas de minuteur natif hors Android
@@ -85,7 +86,7 @@ export default function WorkoutScreen() {
   const notificationsOff = permission === 'denied' || permission === 'blocked'
 
   return (
-    <SafeAreaView edges={['bottom']} className="flex-1 bg-background">
+    <View className="flex-1 bg-background">
       <Stack.Screen options={{ title: name ?? '' }} />
       <SectionList
         contentContainerClassName="p-4"
@@ -122,8 +123,15 @@ export default function WorkoutScreen() {
             onToggle={handleToggle}
           />
         )}
+        ListFooterComponent={<View style={{ height: footerHeight }} />}
       />
-      <View className="gap-3 p-4">
+      <SafeAreaView
+        edges={['bottom']}
+        // Les zones vides du pied laissent passer le toucher vers la liste
+        pointerEvents="box-none"
+        className="absolute bottom-0 left-0 right-0 gap-3 p-4"
+        onLayout={event => setFooterHeight(event.nativeEvent.layout.height)}
+      >
         {restEndsAt !== null && (
           <RestTimer
             restEndsAt={restEndsAt}
@@ -135,7 +143,7 @@ export default function WorkoutScreen() {
         <Button onPress={handleFinish}>
           <Text>{t('workout.finish')}</Text>
         </Button>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </View>
   )
 }
