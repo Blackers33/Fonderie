@@ -43,18 +43,6 @@ export async function requestNotificationPermission(): Promise<NotificationPermi
   return result.canAskAgain ? 'denied' : 'blocked'
 }
 
-// Renvoie l'id de la notif planifiée (pour l'annuler plus tard : « Passer », nouvelle série…)
-export function scheduleRestTimerEnd(seconds: number, content: { title: string; body: string }) {
-  return Notifications.scheduleNotificationAsync({
-    content,
-    trigger: {
-      type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-      seconds,
-      channelId: REST_TIMER_CHANNEL_ID,
-    },
-  })
-}
-
 // Les deux canaux doivent exister avant la demande de permission (Android 13)
 // et avant startRestTimer (sinon startForeground plante). Idempotent.
 export async function ensureRestTimerChannels() {
