@@ -1,4 +1,5 @@
 import type { RoutineExerciseData, TargetSet } from '@workspace/shared-utils'
+import { sql } from 'drizzle-orm'
 import { db } from '@/lib/db/client'
 import { exercises, routines } from '@/lib/db/schema'
 
@@ -25,8 +26,11 @@ const DEMO_ROUTINES = [
       { exerciseId: 'barbell_bench_press_medium_grip', targetSets: sets(3, 8, 60, 20) },
       { exerciseId: 'standing_military_press', targetSets: sets(3, 8, 40, 20) },
       { exerciseId: 'incline_dumbbell_press', targetSets: sets(3, 10, 22.5, 20) },
+      { exerciseId: 'dumbbell_flyes', targetSets: sets(3, 12, 12, 20) },
+      { exerciseId: 'cable_crossover', targetSets: sets(3, 12, 15, 20) },
       { exerciseId: 'side_lateral_raise', targetSets: sets(3, 12, 8, 20) },
       { exerciseId: 'triceps_pushdown', targetSets: sets(3, 12, 25, 20) },
+      { exerciseId: 'lying_triceps_press', targetSets: sets(3, 10, 25, 20) },
     ]),
   },
   {
@@ -70,8 +74,12 @@ export async function seedDemoData(userId: string) {
         DEMO_ROUTINES.map(routine => ({ ...routine, userId, createdAt: now, updatedAt: now })),
       )
       // Conflit sur l'id = routine déjà seedée, peut-être pour une autre identité :
-      // on la réattribue à l'utilisateur courant (option (a))
-      .onConflictDoUpdate({ target: routines.id, set: { userId, updatedAt: now } })
+      // on la réattribue à l'utilisateur courant (option (a)), avec les exercices du seed
+      .onConflictDoUpdate({
+        target: routines.id,
+        // excluded = la ligne qu'on tentait d'insérer : chaque routine reprend SES exercices
+        set: { userId, exercisesData: sql`excluded.exercises_data`, updatedAt: now },
+      })
       .run()
   })
 }

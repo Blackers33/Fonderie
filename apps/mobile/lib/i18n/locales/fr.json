@@ -42,7 +42,16 @@
     "finishConfirmTitle": "Terminer la séance ?",
     "finishConfirmMessage_one": "{{count}} série n'est pas cochée.",
     "finishConfirmMessage_other": "{{count}} séries ne sont pas cochées.",
-    "skipRest": "Passer"
+    "skipRest": "Passer",
+    "notificationsOff": "Notifications désactivées : la fin du repos n'est signalée que si l'app est ouverte.",
+    "openSettings": "Ouvrir les réglages"
+  },
+  "restTimer": {
+    "countdownChannel": "Décompte du repos",
+    "alertChannel": "Fin du repos",
+    "countdownTitle": "Repos en cours",
+    "doneTitle": "Repos terminé",
+    "doneBody": "Place à la série suivante."
   },
   "exerciseTypes": {
     "chest": "Pectoraux",
